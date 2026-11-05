@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¡Feliz Cumpleaños Ninja! - Bijū Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Caveat:wght@600;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange-kurama: #ff5500;
+  --orange-glow: #ff8800;
+  --chakra-blue: #00d2ff;
+  --ninja-dark: #12131a;
+  --ninja-card: #1c1d27;
+  --gold-scroll: #ffcc00;
+  --pink-accent: #ff477e;
+  --radius: 22px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
+html, body { min-height: 100%; }
+body {
+  font-family: 'Fredoka', cursive, sans-serif;
+  color: #fff;
+  background-color: var(--ninja-dark);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Fondos Ninja Dinámicos ---------- */
+.bg { position: fixed; inset: 0; opacity: 0; transition: opacity 1.1s ease; z-index: -3; }
+.bg.on { opacity: 1; }
+.bg1 {
+  background: radial-gradient(circle at 50% 30%, rgba(255, 136, 0, 0.35), transparent 70%),
+              linear-gradient(160deg, #1b0d00 0%, #2a1200 55%, #0d0614 100%);
+}
+.bg2 {
+  background: radial-gradient(circle at 20% 20%, rgba(0, 210, 255, 0.3), transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(255, 85, 0, 0.3), transparent 50%),
+              linear-gradient(180deg, #0d0d18 0%, #1a1528 50%, #2b0c00 100%);
+}
+.bg3 {
+  background: radial-gradient(circle at 50% 50%, rgba(255, 204, 0, 0.25), transparent 60%),
+              linear-gradient(180deg, #180926 0%, #291142 60%, #0d0614 100%);
+}
+.bg4 {
+  background: radial-gradient(circle at 50% 40%, rgba(255, 71, 126, 0.3), transparent 60%),
+              radial-gradient(circle at 10% 90%, rgba(0, 210, 255, 0.35), transparent 50%),
+              linear-gradient(180deg, #1f0b24 0%, #36102e 50%, #10061a 100%);
+}
+
+.stars { position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: 0; transition: opacity 1s; }
+body[data-scene="2"] .stars, body[data-scene="3"] .stars, body[data-scene="4"] .stars { opacity: 1; }
+.stars i { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #00d2ff; box-shadow: 0 0 8px #00d2ff; animation: twinkle 3s ease-in-out infinite; }
+@keyframes twinkle { 0%,100% { opacity: .2; transform: scale(.6); } 50% { opacity: 1; transform: scale(1.4); } }
+
+#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 60; }
+.float-layer { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+
+/* ---------- Escenas ---------- */
+#app { position: relative; min-height: 100vh; }
+.scene { display: none; min-height: 100vh; padding: clamp(22px,4vw,48px) 16px 64px; flex-direction: column; align-items: center; gap: 22px; position: relative; z-index: 1; text-align: center; }
+.scene.is-active { display: flex; animation: sceneIn .8s cubic-bezier(.2,.8,.2,1) both; }
+.scene.leaving { animation: sceneOut .45s ease both; }
+@keyframes sceneIn { from { opacity:0; transform: translateY(24px) scale(.98); } to { opacity:1; transform: none; } }
+@keyframes sceneOut { to { opacity:0; transform: translateY(-16px) scale(.98); } }
+@keyframes fadeUp { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform: none; } }
+#s1 { justify-content: center; }
+
+.font-bangers { font-family: 'Bangers', cursive; letter-spacing: 2px; }
+
+/* ---------- Botones estilo Ninja ---------- */
+.btn {
+  font: inherit; font-weight: 700; font-size: 1.1rem; border: 3px solid #000; cursor: pointer; color: #fff; padding: 14px 34px; border-radius: 999px;
+  background: linear-gradient(135deg, var(--orange-kurama), #ff9900);
+  box-shadow: 0 6px 0 #000, 0 10px 24px rgba(255, 85, 0, 0.5);
+  transition: transform .2s, box-shadow .2s; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+.btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 9px 0 #000, 0 14px 30px rgba(255, 85, 0, 0.7); }
+.btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
+.btn.pulse { animation: pulse 2.2s ease-in-out infinite; }
+.btn.light { background: linear-gradient(135deg, #00d2ff, #0072ff); box-shadow: 0 6px 0 #000, 0 10px 24px rgba(0, 210, 255, 0.5); color: #fff; }
+@keyframes pulse { 0%,100% { box-shadow: 0 6px 0 #000, 0 0 0 0 rgba(255,136,0,0.6); } 50% { box-shadow: 0 6px 0 #000, 0 0 0 16px rgba(255,136,0,0); } }
+
+/* ---------- Escena 1: Pergamino Ninja ---------- */
+.hint { font-family: 'Caveat', cursive; font-size: 2rem; color: var(--gold-scroll); text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
+.envelope-wrap { display: flex; flex-direction: column; align-items: center; gap: 20px; transition: opacity .6s, transform .6s; }
+.envelope-wrap.gone { opacity: 0; transform: translateY(50px) scale(.9); }
+
+.scroll-btn {
+  width: min(320px, 82vw); height: 180px; background: none; border: none; cursor: pointer; position: relative;
+  filter: drop-shadow(0 15px 20px rgba(0,0,0,0.6)); transition: transform 0.3s;
+}
+.scroll-btn:hover { transform: scale(1.05) rotate(1deg); }
+
+.note {
+  position: relative; width: min(600px, 100%); background: #fff8e7; border: 5px solid #5a3825; border-radius: var(--radius);
+  padding: clamp(26px, 5vw, 44px); text-align: left; color: #2c1a0e;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6), inset 0 0 40px rgba(210, 160, 90, 0.3);
+  animation: noteIn 1s cubic-bezier(.2,.9,.25,1.1) both;
+}
+@keyframes noteIn { from { opacity:0; transform: translateY(60px) scale(.8) rotate(-2deg); } to { opacity:1; transform: none; } }
+.note-to { font-family: 'Bangers', cursive; font-size: clamp(1.8rem,6vw,2.5rem); color: #d43f00; letter-spacing: 2px; margin-bottom: 14px; text-shadow: 1px 1px 0 #ffcc00; }
+.note-body p { font-family: 'Caveat', cursive; font-size: clamp(1.4rem,4vw,1.75rem); line-height: 1.35; margin-bottom: 14px; font-weight: 700; color: #3a2211; opacity: 0; animation: fadeUp .9s forwards; animation-delay: calc(var(--i)*.9s + .7s); }
+.note-sign { font-family: 'Bangers', cursive; color: #0088cc; font-size: 1.5rem; letter-spacing: 1px; margin: 8px 0 22px; text-align: right; }
+.note .btn { display: block; margin: 0 auto; }
+
+/* ---------- Escena 2: Sorpresa Shinobi ---------- */
+#s2 h2 { font-size: clamp(2.2rem, 8vw, 3.8rem); color: var(--gold-scroll); text-shadow: 0 4px 0 #000, 0 0 20px rgba(255, 204, 0, 0.6); }
+#s2 .sub { font-weight: 600; opacity: .95; color: #00d2ff; margin-top: 6px; text-shadow: 0 2px 4px #000; }
+.s2-grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; align-items: center; width: min(960px, 100%); margin-top: 6px; }
+.col { display: flex; flex-direction: column; gap: 22px; align-items: center; }
+
+/* Tarjeta Rasengan Interactivo */
+.rasengan-card {
+  position: relative; width: min(290px, 78vw); background: #151824; border: 4px solid var(--chakra-blue); padding: 18px 14px; border-radius: 20px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.6), 0 0 20px rgba(0, 210, 255, 0.4); transform: rotate(-2deg); transition: transform .4s; color: #fff; text-align: center;
+}
+.rasengan-card:hover { transform: rotate(0) scale(1.04); }
+.rasengan-orb {
+  width: 140px; height: 140px; margin: 10px auto; border-radius: 50%; cursor: pointer; position: relative;
+  background: radial-gradient(circle, #ffffff 10%, #00f0ff 40%, #0044ff 80%, transparent 100%);
+  box-shadow: 0 0 30px #00d2ff, inset 0 0 25px #ffffff; animation: pulseChakra 1.8s infinite alternate ease-in-out;
+  display: flex; align-items: center; justify-content: center; font-size: 2.5rem; select: none;
+}
+@keyframes pulseChakra {
+  0% { transform: scale(0.95); box-shadow: 0 0 20px #00d2ff, inset 0 0 15px #fff; }
+  100% { transform: scale(1.08); box-shadow: 0 0 45px #00f0ff, 0 0 70px rgba(0,210,255,0.6), inset 0 0 35px #fff; }
+}
+.rasengan-card h3 { font-family: 'Bangers', cursive; font-size: 1.8rem; color: var(--chakra-blue); margin-top: 6px; letter-spacing: 1px; }
+.rasengan-card p { font-size: 0.95rem; opacity: 0.9; margin-top: 4px; font-weight: 600; }
+
+/* Pergamino de Misiones Ninja */
+.mission-scroll {
+  display: flex; flex-direction: column; gap: 8px; padding: 16px 20px; border-radius: 22px; background: rgba(35, 22, 15, 0.95); border: 3px solid var(--gold-scroll);
+  width: min(340px, 88vw); text-align: left; box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 15px rgba(255, 204, 0, 0.3); color: #fff;
+}
+.mission-scroll h4 { font-family: 'Bangers', cursive; font-size: 1.5rem; color: var(--gold-scroll); letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+.mission-list { list-style: none; font-size: 0.95rem; line-height: 1.5; font-weight: 600; color: #f2e3c6; }
+.mission-list li { margin-bottom: 6px; display: flex; align-items: flex-start; gap: 6px; }
+
+.cake-box { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.cake { width: 200px; cursor: pointer; overflow: visible; filter: drop-shadow(0 12px 18px rgba(0,0,0,0.6)); transition: transform .3s; }
+.cake:hover { transform: scale(1.05); }
+#flame { transform-origin: 100px 28px; animation: flicker .22s ease-in-out infinite alternate; }
+@keyframes flicker { from { transform: scale(1,1) rotate(-3deg); } to { transform: scale(.92,1.08) rotate(3deg); } }
+.cake.out #flame { opacity: 0; transition: opacity .25s; }
+#smoke { opacity: 0; }
+.cake.out #smoke { animation: smoke 1.8s ease-out; }
+@keyframes smoke { 0% { opacity: .8; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-40px); } }
+#wishText { font-weight: 700; color: var(--gold-scroll); min-height: 1.6em; text-shadow: 0 2px 4px #000; }
+
+.cupones { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; width: min(900px, 100%); }
+.cupon {
+  width: min(210px, 42vw); padding: 16px 12px; border-radius: 18px; background: rgba(30, 32, 45, 0.9); border: 3px dashed var(--orange-kurama);
+  cursor: pointer; transition: transform .25s, background .25s; font-weight: 700; line-height: 1.35; box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+.cupon:hover { transform: translateY(-5px) rotate(-1.5deg); background: rgba(45, 48, 68, 0.95); border-color: var(--gold-scroll); }
+.cupon b { display: block; font-size: 1.9rem; margin-bottom: 4px; }
+.cupon small { display: block; opacity: .9; color: var(--chakra-blue); font-weight: 600; }
+
+.plush-row { display: flex; align-items: flex-end; justify-content: center; gap: clamp(10px, 4vw, 40px); width: 100%; position: relative; margin-top: 10px; padding-bottom: 12px; }
+.plush-row::after { content: ""; position: absolute; left: 5%; right: 5%; bottom: 0; height: 30px; border-radius: 50%; background: radial-gradient(ellipse, rgba(255, 136, 0, 0.4), transparent 70%); z-index: -1; }
+.plush { width: clamp(115px, 27vw, 195px); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.7)); }
+.plush svg { width: 100%; height: auto; display: block; animation: bob 3.4s ease-in-out infinite; }
+.plush:nth-child(2) svg { animation-delay: -1.1s; }
+.plush:nth-child(3) svg { animation-delay: -2.2s; }
+@keyframes bob { 0%,100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-10px) rotate(1.5deg); } }
+
+/* Globos y Corazones / Partículas */
+.balloon {
+  position: absolute; bottom: -120px; width: var(--sz); height: calc(var(--sz)*1.22); border-radius: 50% 50% 48% 48%; left: var(--x);
+  background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.75), transparent 34%), var(--c); animation: rise var(--t) linear var(--d) infinite; opacity: .92;
+  box-shadow: inset -6px -8px 14px rgba(0,0,0,.3), 0 0 12px var(--c); border: 2px solid #000;
+}
+.balloon::before { content: ""; position: absolute; left: 50%; bottom: -7px; width: 10px; height: 10px; background: inherit; transform: translateX(-50%) rotate(45deg); }
+.balloon::after { content: ""; position: absolute; left: 50%; top: 100%; margin-top: 6px; width: 2px; height: 70px; background: rgba(255,255,255,.6); transform-origin: top; animation: sway 3s ease-in-out infinite alternate; }
+@keyframes rise { 0% { transform: translateY(0) translateX(0); } 50% { transform: translateY(-62vh) translateX(18px); } 100% { transform: translateY(-135vh) translateX(-12px); } }
+@keyframes sway { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
+.heart { position: absolute; bottom: -40px; left: var(--x); font-size: var(--sz); color: var(--c); opacity: .8; text-shadow: 0 0 10px var(--c); animation: heartUp var(--t) ease-in var(--d) infinite; }
+@keyframes heartUp { 0% { transform: translateY(0) scale(.8); } 100% { transform: translateY(-115vh) scale(1.2) rotate(20deg); opacity: 0; } }
+
+/* ---------- Escena 3: Examen Shinobi ---------- */
+#s3 h2 { font-size: clamp(2.2rem, 7vw, 3.4rem); color: var(--gold-scroll); text-shadow: 0 4px 0 #000; }
+#s3 .sub { font-weight: 600; opacity: .95; color: var(--chakra-blue); max-width: 520px; }
+.quiz, .result {
+  width: min(600px, 100%); background: rgba(24, 26, 38, 0.92); border: 3px solid var(--orange-kurama); backdrop-filter: blur(10px);
+  border-radius: var(--radius); padding: clamp(20px, 4vw, 30px); box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 20px rgba(255, 85, 0, 0.3);
+}
+.q-progress { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
+.q-progress i { width: 34px; height: 8px; border-radius: 99px; background: rgba(255,255,255,.2); transition: background .3s; }
+.q-progress i.done { background: var(--gold-scroll); box-shadow: 0 0 8px var(--gold-scroll); }
+.q-progress i.now { background: var(--chakra-blue); box-shadow: 0 0 8px var(--chakra-blue); }
+.quiz h3 { font-size: clamp(1.25rem, 4vw, 1.55rem); line-height: 1.35; margin-bottom: 8px; color: #fff; }
+.opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; font: inherit; font-weight: 700; color: #fff; background: #2a2c3d; border: 2px solid #444;
+  border-radius: 16px; padding: 14px 18px; margin-top: 12px; cursor: pointer; text-align: left; transition: transform .2s, background .3s, border-color .3s; box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+}
+.opt:hover:not(:disabled) { transform: translateX(6px); border-color: var(--orange-kurama); background: #35384d; }
+.opt:disabled { cursor: default; }
+.opt.correct { background: #164e27; color: #a3e635; border-color: #84cc16; }
+.opt.correct::after { content: "✓"; font-size: 1.3rem; color: #a3e635; }
+.opt.chosen { outline: 3px solid var(--gold-scroll); }
+.q-feedback { min-height: 3em; margin-top: 16px; font-weight: 700; font-size: 1.05rem; line-height: 1.4; color: var(--gold-scroll); }
+.q-feedback.show { animation: fadeUp .6s both; }
+.quiz .btn { margin-top: 10px; }
+.result { animation: noteIn .9s both; }
+.result .trophy { font-size: 4rem; display: block; animation: bob 2.6s ease-in-out infinite; }
+.result h3 { font-family: 'Bangers', cursive; font-size: 2.2rem; margin: 8px 0; color: var(--gold-scroll); letter-spacing: 1px; }
+.result p { line-height: 1.55; font-weight: 600; color: #e2e8f0; }
+
+/* ---------- Escena 4: Ramo Ninja de Flores Vivas ---------- */
+#s4 { justify-content: flex-start; }
+#s4 h2 { font-size: clamp(2rem, 7vw, 3.4rem); color: var(--gold-scroll); text-shadow: 0 4px 0 #000, 0 0 20px rgba(255, 204, 0, 0.5); }
+.stage { position: relative; display: grid; grid-template-columns: auto minmax(0, 480px) auto; align-items: end; gap: clamp(4px, 2vw, 20px); width: min(1000px, 100%); margin-top: 4px; }
+.stage::after { content: ""; position: absolute; left: 4%; right: 4%; bottom: -6px; height: 44px; border-radius: 50%; background: radial-gradient(ellipse, rgba(255, 85, 0, 0.5), transparent 70%); z-index: -1; }
+.stage .plush { width: clamp(90px, 22vw, 185px); align-self: end; }
+.bouquet-card {
+  background: #ffffff;
+  border: 5px solid #000;
+  border-radius: 28px;
+  padding: 16px 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 25px rgba(255, 255, 255, 0.4);
+}
+.bouquet { width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.3)); }
+.chick-front { position: absolute; left: calc(50% + clamp(44px, 9vw, 84px)); bottom: -8px; width: clamp(70px, 16vw, 105px); transform: translateX(-50%); }
+.chick-front svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 8px rgba(0,0,0,0.6)); animation: bob 3s ease-in-out infinite; }
+.stem { fill: none; stroke: #2e7d32; stroke-width: 4.5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.1s ease-out forwards; animation-delay: var(--d); }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.pop { transform-box: fill-box; transform-origin: 50% 100%; transform: scale(0); animation: popIn .9s cubic-bezier(.2,1.5,.4,1) forwards; animation-delay: var(--d); }
+@keyframes popIn { to { transform: scale(1); } }
+.swayer { transform-box: fill-box; transform-origin: 50% 100%; animation: swayF 4.5s ease-in-out infinite alternate; animation-delay: var(--d); }
+@keyframes swayF { from { transform: rotate(-2.5deg); } to { transform: rotate(2.5deg); } }
+.spark { fill: var(--chakra-blue); filter: drop-shadow(0 0 6px var(--chakra-blue)); animation: twinkle 2.4s ease-in-out infinite; }
+.final-msg { max-width: 580px; font-weight: 700; font-size: 1.15rem; line-height: 1.6; color: #fff; margin-top: 10px; text-shadow: 0 2px 4px #000; }
+.final-msg .script { display: block; font-family: 'Bangers', cursive; font-size: 2.2rem; color: var(--gold-scroll); letter-spacing: 2px; margin-bottom: 6px; }
+#s4 .btn { margin-top: 8px; }
+
+@media (prefers-reduced-motion:reduce){
+  *, *::before, *::after { animation-duration: .01ms!important; animation-iteration-count: 1!important; transition-duration: .01ms!important; }
+  .balloon, .heart { display: none; }
+}
+</style>
+</head>
+<body data-scene="1">
+
+<div class="bg bg1 on"></div><div class="bg bg2"></div><div class="bg bg3"></div><div class="bg bg4"></div>
+<div class="stars" id="stars"></div>
+<div class="float-layer" id="floaters"></div>
+<canvas id="confetti"></canvas>
+
+<main id="app">
+
+  <!-- ===== Escena 1: Sobre / Pergamino Ninja ===== -->
+  <section class="scene is-active" id="s1">
+    <p class="hint" id="hint1">📜 Tienes una misión especial asignada 📜</p>
+    <div class="envelope-wrap" id="envWrap">
+      <button class="scroll-btn" id="envelope" aria-label="Abrir Pergamino Ninja">
+        <!-- SVG Pergamino Shinobi -->
+        <svg viewBox="0 0 280 160" class="w-full h-full">
+          <rect x="25" y="30" width="230" height="100" rx="8" fill="#e6c280" stroke="#4a2e1b" stroke-width="5"/>
+          <rect x="35" y="40" width="210" height="80" fill="#fff3cd" stroke="#8a5a36" stroke-width="3"/>
+          <rect x="10" y="20" width="25" height="120" rx="6" fill="#8a2be2" stroke="#000" stroke-width="4"/>
+          <rect x="245" y="20" width="25" height="120" rx="6" fill="#8a2be2" stroke="#000" stroke-width="4"/>
+          <circle cx="140" cy="80" r="28" fill="#ff4500" stroke="#000" stroke-width="3"/>
+          <!-- Espiral Uzumaki / Konoha -->
+          <path d="M 140 68 A 12 12 0 1 1 128 80 A 6 6 0 1 1 140 80" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <p class="tap" id="tap" style="color: var(--gold-scroll); font-weight:700;">¡Toca el pergamino para romper el sello!</p>
+    </div>
+
+    <article class="note" id="note" hidden>
+      <p class="note-to">¡PARA ROSIII! 🌀</p>
+      <div class="note-body" id="noteBody"></div>
+      <p class="note-sign" id="noteSign"></p>
+      <button class="btn pulse" id="btnNext1" hidden>¡Siguiente sorpresa Shinobi! ⚡</button>
+    </article>
+  </section>
+
+  <!-- ===== Escena 2: Sorpresa Shinobi ===== -->
+  <section class="scene" id="s2">
+    <header>
+      <h1 class="font-bangers" style="font-size:clamp(2.5rem, 8vw, 4.2rem); color:var(--orange-kurama); text-shadow:0 4px 0 #000, 0 0 20px #ff5500;">
+        ¡DATTEBAYO! ¡FELIZ CUMPLEAÑOS!
+      </h1>
+      <h2 style="font-size: clamp(1.4rem,4vw,2rem); color: var(--gold-scroll); margin-top:2px;">
+        <span data-nombre></span>
+      </h2>
+      <p class="sub">✨ ¡La voluntad del fuego y los Bijū celebran tu día! ✨</p>
+    </header>
+
+    <div class="s2-grid">
+      <!-- Módulo Rasengan Interactivo en lugar de la foto -->
+      <div class="rasengan-card">
+        <h3>🌀 RASENGAN DE CHAKRA</h3>
+        <div class="rasengan-orb" id="rasenganOrb" role="button" tabindex="0" title="¡Toca para concentrar Chakra!">
+          ⚡
+        </div>
+        <p id="rasenganText">¡Toca la esfera para liberar todo tu Chakra de Cumpleaños!</p>
+      </div>
+
+      <div class="col">
+        <!-- Pergamino de Misiones Shinobi en lugar de la música -->
+        <div class="mission-scroll">
+          <h4>📜 PERGAMINO DE MISIONES DE CUMPLEAÑOS</h4>
+          <ul class="mission-list">
+            <li>🍥 <b>Misión Rango S:</b> Disfrutar al máximo tu día especial.</li>
+            <li>🌸 <b>Misión Rango A:</b> Mantener siempre esa hermosa sonrisa.</li>
+            <li>🔥 <b>Misión Rango Especial:</b> Cumplir cada una de tus metas sin rendirte jamás.</li>
+          </ul>
+        </div>
+
+        <div class="cake-box">
+          <svg class="cake" id="cake" viewBox="0 0 200 170" role="button" tabindex="0" aria-label="Soplar la vela y pedir un deseo">
+            <ellipse cx="100" cy="152" rx="88" ry="12" fill="rgba(0,0,0,.4)"/>
+            <ellipse cx="100" cy="142" rx="84" ry="13" fill="#2a1b10" stroke="#000" stroke-width="3"/>
+            <!-- Pastel Naruto Naranja y Negro -->
+            <rect x="30" y="98" width="140" height="44" rx="10" fill="#ff5500" stroke="#000" stroke-width="3"/>
+            <path d="M30 108q10 14 20 0t20 0t20 0t20 0t20 0t20 0t20 0v-10h-140z" fill="#ffcc00" stroke="#000" stroke-width="2"/>
+            <rect x="52" y="60" width="96" height="42" rx="10" fill="#111" stroke="#000" stroke-width="3"/>
+            <path d="M52 70q8 12 16 0t16 0t16 0t16 0t16 0t16 0v-8h-96z" fill="#ff5500"/>
+            <!-- Símbolo Konoha en Pastel -->
+            <circle cx="100" cy="80" r="8" fill="#ffcc00"/>
+            <rect x="96" y="28" width="8" height="34" rx="2" fill="#00d2ff" stroke="#000" stroke-width="2"/>
+            <g id="flame">
+              <!-- Llama de Chakra Azul -->
+              <path d="M100 4C88 18 92 28 100 28C108 28 112 18 100 4Z" fill="#00d2ff" filter="drop-shadow(0 0 8px #00d2ff)"/>
+              <path d="M100 12C95 18 97 25 100 25C103 25 105 18 100 12Z" fill="#ffffff"/>
+            </g>
+            <g id="smoke" fill="#00d2ff"><circle cx="100" cy="20" r="4"/><circle cx="104" cy="10" r="3"/><circle cx="97" cy="2" r="2.5"/></g>
+          </svg>
+          <p id="wishText">¡Toca la llama de Chakra azul para pedir tu deseo! 🕯️⚡</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cupones Ninja -->
+    <div class="cupones" id="cupones"></div>
+
+    <!-- Los 3 Bijūs Ilustrados (Kurama, Shukaku, Son Goku) -->
+    <div class="plush-row">
+      <div class="plush" data-plush="kurama"></div>
+      <div class="plush" data-plush="shukaku"></div>
+      <div class="plush" data-plush="songoku"></div>
+    </div>
+
+    <button class="btn light pulse" id="btnNext2">¡Probar el Examen Shinobi! 🎮</button>
+  </section>
+
+  <!-- ===== Escena 3: Jueguito / Examen Shinobi ===== -->
+  <section class="scene" id="s3">
+    <header>
+      <h2 class="font-bangers">EXAMEN SHINOBI DE CUMPLEAÑOS</h2>
+      <p class="sub">Supera cada pregunta para obtener el rango de Kage del Cumpleaños.</p>
+    </header>
+
+    <div class="quiz" id="quiz">
+      <div class="q-progress" id="qProgress"></div>
+      <h3 id="qText"></h3>
+      <div id="qOptions"></div>
+      <p class="q-feedback" id="qFeedback" aria-live="polite"></p>
+      <button class="btn" id="qNext" hidden>Siguiente Pregunta</button>
+    </div>
+
+    <div class="result" id="result" hidden>
+      <span class="trophy">📜</span>
+      <h3>¡RANGO HOKAGE ALCANZADO!</h3>
+      <p id="resultText"></p>
+    </div>
+
+    <button class="btn light pulse reveal" id="btnNext3" hidden>¡Recibir el Ramo Ninja Final! 💐</button>
+  </section>
+
+  <!-- ===== Escena 4: Ramo Ninja de Flores Vivas ===== -->
+  <section class="scene" id="s4">
+    <h2 class="font-bangers">¡ESTE RAMO DE CHAKRA ES PARA TI!</h2>
+
+    <div class="stage">
+      <div class="plush" data-plush="kurama"></div>
+      <div class="bouquet-card">
+        <svg class="bouquet" id="bouquet" viewBox="0 0 400 420" role="img" aria-label="Ramo Ninja con flores vivas e intensas"></svg>
+      </div>
+      <div class="plush" data-plush="shukaku"></div>
+      <div class="chick-front" data-plush="songoku"></div>
+    </div>
+
+    <p class="final-msg" id="finalMsg"></p>
+    <button class="btn" id="btnRestart">Revivir la Aventura Ninja ↺</button>
+  </section>
+
+</main>
+
+<script>
+/* =====================================================
+   CONFIGURACIÓN PERSONALIZABLE
+   ===================================================== */
+const CONFIG = {
+  encabezadoCarta: "¡PARA ROSIII! 🌀",
+  nombre: "Rosiii",
+  de: "Tu Amigo Ninja",
+
+  nota: [
+    "Hoy celebramos el día en que llegaste a este mundo ¡Dattebayo!",
+    "No puedo estar mas agradecido con dios por haberme permitido conocerte.",
+    "Que en este dia tan especial lo pases de lo mejor con tus amistades y familia que siempre sigas con esa hermosa sonrisa que te特征iza, que nunca dejes de ser una persona maravillosa, que nada ni nadies te detenga de conceguir tus metas y que siempre sigas adelante.",
+    "En estos 15 añitos que ya as cumplido que lo pases de lo mejor, y q Dios permita que te de mas años de vida, que lo pases de lo mejor en tu dia."
+  ],
+
+  // Deja vacio "" para que la persona elija su propia foto al hacer clic
+  foto: "",
+  pieDeFoto: "15 Años Especiales 💗",
+
+  // Canción Silhouette (Naruto Shippuden OP 16)
+  musica: "https://ia801503.us.archive.org/15/items/naruto-shippuden-opening-16-silhouette/Naruto%20Shippuden%20Opening%2016%20-%20Silhouette.mp3",
+  tituloMusica: "Silhouette - KANA-BOON (Naruto OP 16)",
+
+  cupones: [
+    { icono: "🍥", titulo: "Ramen en Ichiraku", detalle: "Invito yo un tazón gigante" },
+    { icono: "🤗", titulo: "Jutsu de Abrazo", detalle: "Válido para cuando lo necesites" },
+    { icono: "🎬", titulo: "Maratón de Anime", detalle: "Tú eliges la serie y las golosinas" }
+  ],
+
+  preguntas: [
+    { p: "¿Quién es la mejor amiga del mundo ninja?", o: [
+      ["Tú (Rosiii), obviamente", "¡Correcto! Ni el mismísimo Hokage lo duda."],
+      ["Tú, sin dudarlo", "¡Correcto! Lo supe desde el primer momento."],
+      ["Tú (respuesta oficial de Konoha)", "¡Correcto! Ya está sellado con pergamino."] ] },
+    { p: "¿Qué es lo que más admiro de ti?", o: [
+      ["Tu hermosa sonrisa", "¡Correcto! Ilumina la aldea entera."],
+      ["Tu gran corazón", "¡Correcto! Cuidas a todos como un verdadero shinobi."],
+      ["Tu forma de ser tú", "¡Correcto! Auténtica y única, ¡jamás cambies tu camino ninja!"] ] },
+    { p: "¿Cómo me siento cuando estoy contigo?", o: [
+      ["Feliz y llena de energía", "¡Correcto! Contigo los días grises tienen chakra de colores."],
+      ["En confianza, como en casa", "¡Correcto! Contigo puedo ser yo misma sin miedo."],
+      ["Con ganas de reír sin parar", "¡Correcto! Tu risa es más contagiosa que un jutsu."] ] },
+    { p: "¿Qué tan importante eres para mí?", o: [
+      ["Muchísimo", "¡Correcto! Más de lo que las palabras de un pergamino pueden decir."],
+      ["Más que un tazón de Ramen caliente", "¡Correcto! Y eso ya es decir demasiado."],
+      ["Infinito", "¡Correcto! Nuestro lazo de amistad es indestructible."] ] },
+    { p: "¿Eres una persona maravillosa por dentro y por fuera?", o: [
+      ["Sí", "¡Correcto! Y lo sabes, aunque a veces se te olvide."],
+      ["Sí, mil veces", "¡Correcto! No hay ni una duda en toda la aldea."],
+      ["Obvio que sí", "¡Correcto! El mundo es más bonito contigo."] ] }
+  ],
+  resultado: "Respondiste 5 de 5 en tu Examen Chūnin. ¡15 añitos cumplidos y a seguir cumpliendo metas! ¡Gracias por ser una persona maravillosa!",
+  mensajeFinal: "¡Gracias por existir y ser parte de mi vida! Que tengas el cumpleaños de 15 más hermoso y lleno de chakra del mundo. ¡Dattebayo!"
+};
+
+/* =====================================================
+   BIJŪS ILUSTRADOS CON DETALLE ALTO (SVG VIBRANTES)
+   ===================================================== */
+const PLUSH = {
+kurama:`<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <radialGradient id="kuramaAura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff9900" stop-opacity="0.8"/>
+      <stop offset="70%" stop-color="#ff3300" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ff0000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="kuramaFur" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff7700"/>
+      <stop offset="60%" stop-color="#e63900"/>
+      <stop offset="100%" stop-color="#990000"/>
+    </linearGradient>
+    <linearGradient id="kuramaTail" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffaa00"/>
+      <stop offset="100%" stop-color="#cc2200"/>
+    </linearGradient>
+  </defs>
+  <circle cx="80" cy="80" r="76" fill="url(#kuramaAura)"/>
+  <g fill="url(#kuramaTail)" stroke="#440000" stroke-width="1.5">
+    <path d="M30 110 Q10 70 20 30 Q40 55 50 85 Z"/>
+    <path d="M20 120 Q0 85 10 45 Q35 70 45 95 Z"/>
+    <path d="M40 100 Q20 45 40 15 Q55 50 58 80 Z"/>
+    <path d="M130 110 Q150 70 140 30 Q120 55 110 85 Z"/>
+    <path d="M140 120 Q160 85 150 45 Q125 70 115 95 Z"/>
+    <path d="M120 100 Q140 45 120 15 Q105 50 102 80 Z"/>
+    <path d="M70 90 Q60 25 80 5 Q90 30 85 80 Z"/>
+    <path d="M52 95 Q40 35 60 10 Q70 45 68 85 Z"/>
+    <path d="M108 95 Q120 35 100 10 Q90 45 92 85 Z"/>
+  </g>
+  <ellipse cx="80" cy="108" rx="36" ry="32" fill="url(#kuramaFur)" stroke="#2b0000" stroke-width="2"/>
+  <ellipse cx="80" cy="112" rx="20" ry="22" fill="#ffcc99"/>
+  <path d="M48 70 Q30 40 46 20 Q65 42 80 48 Q95 42 114 20 Q130 40 112 70 Z" fill="url(#kuramaFur)" stroke="#2b0000" stroke-width="2.5"/>
+  <circle cx="80" cy="65" r="32" fill="url(#kuramaFur)" stroke="#2b0000" stroke-width="2"/>
+  <path d="M52 45 L36 10 L64 32 Z" fill="url(#kuramaFur)" stroke="#2b0000" stroke-width="2"/>
+  <path d="M50 40 L42 16 L58 32 Z" fill="#2b0000"/>
+  <path d="M108 45 L124 10 L96 32 Z" fill="url(#kuramaFur)" stroke="#2b0000" stroke-width="2"/>
+  <path d="M110 40 L118 16 L102 32 Z" fill="#2b0000"/>
+  <path d="M52 58 Q64 68 80 62 Q96 68 108 58 Q115 78 80 82 Q45 78 52 58 Z" fill="#150505"/>
+  <ellipse cx="65" cy="64" rx="9" ry="7" fill="#e60000" stroke="#ffd700" stroke-width="1.5"/>
+  <ellipse cx="95" cy="64" rx="9" ry="7" fill="#e60000" stroke="#ffd700" stroke-width="1.5"/>
+  <line x1="65" y1="58" x2="65" y2="70" stroke="#000" stroke-width="3"/>
+  <line x1="95" y1="58" x2="95" y2="70" stroke="#000" stroke-width="3"/>
+  <circle cx="63" cy="62" r="2" fill="#fff"/>
+  <circle cx="93" cy="62" r="2" fill="#fff"/>
+  <polygon points="80,72 74,78 86,78" fill="#111"/>
+  <path d="M72 80 Q80 88 88 80" stroke="#111" stroke-width="2.5" fill="none"/>
+  <polygon points="73,80 75,85 77,80" fill="#fff"/>
+  <polygon points="83,80 85,85 87,80" fill="#fff"/>
+  <path d="M44 68 L58 71 M42 75 L57 76 M45 82 L58 80" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M116 68 L102 71 M118 75 L103 76 M115 82 L102 80" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
+</svg>`,
+
+shukaku:`<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <radialGradient id="sandAura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#e6c280" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#8c6834" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shukakuSkin" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e3c896"/>
+      <stop offset="50%" stop-color="#c4a468"/>
+      <stop offset="100%" stop-color="#947438"/>
+    </linearGradient>
+  </defs>
+  <circle cx="80" cy="80" r="76" fill="url(#sandAura)"/>
+  <path d="M110 110 Q155 100 145 50 Q115 40 100 85 Z" fill="url(#shukakuSkin)" stroke="#4a3512" stroke-width="2"/>
+  <path d="M125 60 Q140 75 130 90 M118 50 Q135 55 138 70" stroke="#0044cc" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <ellipse cx="80" cy="110" rx="42" ry="36" fill="url(#shukakuSkin)" stroke="#4a3512" stroke-width="2.5"/>
+  <ellipse cx="80" cy="115" rx="26" ry="24" fill="#f4e4c3"/>
+  <circle cx="80" cy="62" r="35" fill="url(#shukakuSkin)" stroke="#4a3512" stroke-width="2.5"/>
+  <circle cx="50" cy="38" r="12" fill="url(#shukakuSkin)" stroke="#4a3512" stroke-width="2"/>
+  <circle cx="50" cy="38" r="7" fill="#6e5022"/>
+  <circle cx="110" cy="38" r="12" fill="url(#shukakuSkin)" stroke="#4a3512" stroke-width="2"/>
+  <circle cx="110" cy="38" r="7" fill="#6e5022"/>
+  <path d="M65 35 Q80 25 95 35 M70 42 Q80 35 90 42 M55 60 Q65 52 60 70 M105 60 Q95 52 100 70" stroke="#0055ff" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M62 105 Q80 95 98 105 M68 118 Q80 110 92 118" stroke="#0055ff" stroke-width="2.5" fill="none"/>
+  <circle cx="62" cy="60" r="9" fill="#111" stroke="#4a3512" stroke-width="1.5"/>
+  <circle cx="98" cy="60" r="9" fill="#111" stroke="#4a3512" stroke-width="1.5"/>
+  <path d="M62 53 L62 67 M55 60 L69 60" stroke="#ffea00" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M98 53 L98 67 M91 60 L105 60" stroke="#ffea00" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="80,67 75,73 85,73" fill="#2b1a09"/>
+  <path d="M64 78 Q80 92 96 78 Z" fill="#401010" stroke="#2b1a09" stroke-width="2"/>
+  <path d="M68 78 L70 82 M76 80 L78 85 M84 80 L85 85 M92 78 L90 82" stroke="#fff" stroke-width="2"/>
+</svg>`,
+
+songoku:`<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <radialGradient id="lavaAura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff3300" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#660000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gorillaRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff4411"/>
+      <stop offset="60%" stop-color="#c92a00"/>
+      <stop offset="100%" stop-color="#7a1400"/>
+    </linearGradient>
+  </defs>
+  <circle cx="80" cy="80" r="76" fill="url(#lavaAura)"/>
+  <g stroke="#3a0800" stroke-width="2" fill="#d93300">
+    <path d="M30 115 Q5 80 15 45 Q35 70 42 95 Z"/>
+    <path d="M42 105 Q18 55 35 25 Q50 60 52 88 Z"/>
+    <path d="M130 115 Q155 80 145 45 Q125 70 118 95 Z"/>
+    <path d="M118 105 Q142 55 125 25 Q110 60 108 88 Z"/>
+  </g>
+  <ellipse cx="80" cy="112" rx="42" ry="34" fill="url(#gorillaRed)" stroke="#3a0800" stroke-width="2.5"/>
+  <path d="M60 98 Q80 90 100 98 Q95 122 80 126 Q65 122 60 98 Z" fill="#00b894" stroke="#004d3d" stroke-width="2"/>
+  <circle cx="80" cy="62" r="34" fill="url(#gorillaRed)" stroke="#3a0800" stroke-width="2.5"/>
+  <circle cx="44" cy="62" r="11" fill="#ffaa80" stroke="#3a0800" stroke-width="2"/>
+  <circle cx="116" cy="62" r="11" fill="#ffaa80" stroke="#3a0800" stroke-width="2"/>
+  <path d="M54 50 Q80 42 106 50 Q112 72 80 82 Q48 72 54 50 Z" fill="#ffc4a3" stroke="#3a0800" stroke-width="1.5"/>
+  <polygon points="56,32 64,46 50,44" fill="#ffd700" stroke="#998000" stroke-width="1.5"/>
+  <polygon points="104,32 96,46 110,44" fill="#ffd700" stroke="#998000" stroke-width="1.5"/>
+  <path d="M60 44 Q80 36 100 44 L96 48 Q80 42 64 48 Z" fill="#ffd700"/>
+  <ellipse cx="66" cy="56" rx="7" ry="6" fill="#fff" stroke="#111" stroke-width="1.5"/>
+  <ellipse cx="94" cy="56" rx="7" ry="6" fill="#fff" stroke="#111" stroke-width="1.5"/>
+  <circle cx="66" cy="56" r="3.5" fill="#111"/>
+  <circle cx="94" cy="56" r="3.5" fill="#111"/>
+  <circle cx="64" cy="54" r="1.2" fill="#fff"/>
+  <circle cx="92" cy="54" r="1.2" fill="#fff"/>
+  <path d="M68 68 Q80 62 92 68 Q80 80 68 68 Z" fill="#591c0b"/>
+  <polygon points="69,72 73,62 76,73" fill="#fff" stroke="#111" stroke-width="1"/>
+  <polygon points="91,72 87,62 84,73" fill="#fff" stroke="#111" stroke-width="1"/>
+</svg>`
+};
+
+/* =====================================================
+   UTILIDADES & EFECTOS DE CHAKRA / CONFETI
+   ===================================================== */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rand = (a, b) => a + Math.random() * (b - a);
+
+const cvs = $('#confetti'), ctx = cvs.getContext('2d');
+let W = 0, H = 0, parts = [], running = false;
+const CHAKRA_COLORS = ['#ff6600','#00f0ff','#ffd700','#e60000','#00ff66','#ff0055','#ffffff'];
+
+function resize(){
+  const r = window.devicePixelRatio || 1;
+  W = innerWidth; H = innerHeight;
+  cvs.width = W * r; cvs.height = H * r;
+  ctx.setTransform(r, 0, 0, r, 0, 0);
+}
+addEventListener('resize', resize); resize();
+
+function addPart(p){ parts.push(p); }
+function burst(x, y, n = 95){
+  if (reduceMotion) return;
+  for (let i = 0; i < n; i++){
+    const a = Math.random() * Math.PI * 2, s = rand(5, 12);
+    addPart({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 6, g: .26, w: rand(6, 13), h: rand(4, 9),
+      r: rand(0, 6), vr: rand(-.4, .4), c: CHAKRA_COLORS[(Math.random() * CHAKRA_COLORS.length) | 0], life: rand(110, 190), circle: Math.random() < .3 });
+  }
+  start();
+}
+function rain(ms = 3500){
+  if (reduceMotion) return;
+  const end = performance.now() + ms;
+  (function drop(){
+    if (performance.now() > end) return;
+    for (let i = 0; i < 4; i++){
+      addPart({ x: rand(0, W), y: -14, vx: rand(-1.5, 1.5), vy: rand(2.5, 5), g: .02, w: rand(7, 12), h: rand(4, 8),
+        r: rand(0, 6), vr: rand(-.2, .2), c: CHAKRA_COLORS[(Math.random() * CHAKRA_COLORS.length) | 0], life: 420, circle: Math.random() < .3 });
+    }
+    requestAnimationFrame(drop);
+  })();
+  start();
+}
+function start(){ if (!running){ running = true; requestAnimationFrame(tick); } }
+function tick(){
+  ctx.clearRect(0, 0, W, H);
+  parts = parts.filter(p => p.life > 0 && p.y < H + 30);
+  for (const p of parts){
+    p.vx *= .99; p.vy += p.g; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life--;
+    ctx.save();
+    ctx.translate(p.x, p.y); ctx.rotate(p.r);
+    ctx.globalAlpha = Math.min(1, p.life / 40);
+    ctx.fillStyle = p.c;
+    if (p.circle){ ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, 7); ctx.fill(); }
+    else ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+    ctx.restore();
+  }
+  if (parts.length) requestAnimationFrame(tick);
+  else { running = false; ctx.clearRect(0, 0, W, H); }
+}
+
+const floaters = $('#floaters');
+function clearFloaters(){ floaters.innerHTML = ''; }
+function makeBalloons(n){
+  const cols = ['#ff6600','#00f0ff','#ffd700','#e60000','#9b51e0','#ff5c8d'];
+  for (let i = 0; i < n; i++){
+    const b = document.createElement('div');
+    b.className = 'balloon';
+    b.style.setProperty('--x', rand(2, 94) + '%');
+    b.style.setProperty('--sz', rand(44, 72) + 'px');
+    b.style.setProperty('--c', cols[i % cols.length]);
+    b.style.setProperty('--t', rand(10, 18) + 's');
+    b.style.setProperty('--d', (-rand(0, 16)) + 's');
+    floaters.appendChild(b);
+  }
+}
+function makeHearts(n, cols){
+  for (let i = 0; i < n; i++){
+    const h = document.createElement('span');
+    h.className = 'heart'; h.textContent = '🍥';
+    h.style.setProperty('--x', rand(2, 96) + '%');
+    h.style.setProperty('--sz', rand(20, 42) + 'px');
+    h.style.setProperty('--c', cols[i % cols.length]);
+    h.style.setProperty('--t', rand(8, 15) + 's');
+    h.style.setProperty('--d', (-rand(0, 12)) + 's');
+    floaters.appendChild(h);
+  }
+}
+(function makeStars(){
+  const box = $('#stars');
+  for (let i = 0; i < 50; i++){
+    const s = document.createElement('i');
+    s.style.left = rand(0, 100) + '%'; s.style.top = rand(0, 100) + '%';
+    s.style.animationDelay = rand(0, 3) + 's';
+    s.style.transform = 'scale(' + rand(.6, 1.5) + ')';
+    box.appendChild(s);
+  }
+})();
+
+/* ---------- Cargar Datos y Renders ---------- */
+function actualizarVistaTextos() {
+  $('.note-to').textContent = CONFIG.encabezadoCarta;
+  $$('[data-nombre]').forEach(e => e.textContent = CONFIG.nombre);
+  $('#noteSign').textContent = 'De tu compañero: ' + CONFIG.de;
+  $('#finalMsg').innerHTML = '<span class="script">¡Feliz Cumpleaños, ' + CONFIG.nombre.replace(/</g, '&lt;') + '!</span>' + CONFIG.mensajeFinal.replace(/</g, '&lt;');
+}
+
+$$('[data-plush]').forEach(e => e.innerHTML = PLUSH[e.dataset.plush]);
+
+actualizarVistaTextos();
+
+/* ---------- Cambio de Escena ---------- */
+const scenes = $$('.scene'), bgs = $$('.bg');
+const onEnter = {
+  1: () => { clearFloaters(); makeHearts(16, ['#ff6600','#ffd700','#00f0ff']); },
+  2: () => { clearFloaters(); makeBalloons(16); burst(innerWidth / 2, innerHeight * .35, 130); rain(3500); },
+  3: () => { clearFloaters(); makeBalloons(10); },
+  4: () => { clearFloaters(); makeHearts(24, ['#ff6600','#e60000','#ffd700','#00f0ff']); buildBouquet(); burst(innerWidth / 2, innerHeight * .4, 150); rain(4500); }
+};
+function go(n){
+  const cur = scenes.find(s => s.classList.contains('is-active'));
+  cur.classList.add('leaving');
+  setTimeout(() => {
+    cur.classList.remove('is-active', 'leaving');
+    scenes[n - 1].classList.add('is-active');
+    bgs.forEach((b, i) => b.classList.toggle('on', i === n - 1));
+    document.body.dataset.scene = n;
+    window.scrollTo(0, 0);
+    onEnter[n] && onEnter[n]();
+  }, 450);
+}
+onEnter[1]();
+
+/* Escena 1: Abrir Pergamino Ninja */
+const envelope = $('#envelope'), envWrap = $('#envWrap');
+let opened = false;
+envelope.addEventListener('click', () => {
+  if (opened) return;
+  opened = true;
+  envelope.classList.add('open');
+  $('#tap').style.opacity = 0;
+  const r = envelope.getBoundingClientRect();
+  burst(r.left + r.width / 2, r.top + r.height / 2, 70);
+  setTimeout(() => envWrap.classList.add('gone'), 1600);
+  setTimeout(() => { envWrap.hidden = true; $('#hint1').hidden = true; showNote(); }, 2250);
+});
+function showNote(){
+  const body = $('#noteBody');
+  body.innerHTML = '';
+  CONFIG.nota.forEach((t, i) => {
+    const p = document.createElement('p');
+    p.textContent = t; p.style.setProperty('--i', i);
+    body.appendChild(p);
+  });
+  $('#note').hidden = false;
+  setTimeout(() => {
+    const b = $('#btnNext1');
+    b.hidden = false; b.classList.add('reveal');
+  }, CONFIG.nota.length * 900 + 1500);
+}
+$('#btnNext1').addEventListener('click', () => { go(2); });
+
+/* Escena 2: Rasengan Interactivo y Pastel Ninja */
+const rasenganOrb = $('#rasenganOrb');
+rasenganOrb.addEventListener('click', () => {
+  const r = rasenganOrb.getBoundingClientRect();
+  burst(r.left + r.width / 2, r.top + r.height / 2, 90);
+  $('#rasenganText').textContent = '¡¡RASENGAN FIESTA DE 15 AÑOS ACTIVADO!! 💥✨';
+});
+
+const cake = $('#cake');
+function blow(){
+  if (cake.classList.contains('out')) return;
+  cake.classList.add('out');
+  const r = cake.getBoundingClientRect();
+  burst(r.left + r.width / 2, r.top + r.height * .2, 120);
+  $('#wishText').textContent = '¡Tu deseo ha sido sellado con éxito Ninja! ✨🔥';
+}
+cake.addEventListener('click', blow);
+
+CONFIG.cupones.forEach(c => {
+  const d = document.createElement('div');
+  d.className = 'cupon';
+  d.innerHTML = '<b></b><span></span><small></small>';
+  d.querySelector('b').textContent = c.icono;
+  d.querySelector('span').textContent = c.titulo;
+  d.querySelector('small').textContent = c.detalle;
+  d.addEventListener('click', () => { const r = d.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 45); });
+  $('#cupones').appendChild(d);
+});
+$('#btnNext2').addEventListener('click', () => go(3));
+
+/* Escena 3: Trivia Examen Shinobi */
+let qi = 0, answered = false;
+function renderQ(){
+  const q = CONFIG.preguntas[qi];
+  answered = false;
+  $('#qProgress').innerHTML = CONFIG.preguntas.map((_, i) => '<i class="' + (i < qi ? 'done' : i === qi ? 'now' : '') + '"></i>').join('');
+  $('#qText').textContent = q.p;
+  const box = $('#qOptions'); box.innerHTML = '';
+  q.o.forEach(([txt, msg]) => {
+    const b = document.createElement('button');
+    b.className = 'opt'; b.type = 'button'; b.textContent = txt;
+    b.addEventListener('click', () => {
+      if (answered) return;
+      answered = true;
+      $$('#qOptions .opt').forEach(o => { o.classList.add('correct'); o.disabled = true; });
+      b.classList.add('chosen');
+      const fb = $('#qFeedback');
+      fb.textContent = msg; fb.classList.remove('show'); void fb.offsetWidth; fb.classList.add('show');
+      const r = b.getBoundingClientRect();
+      burst(r.left + r.width / 2, r.top + r.height / 2, 60);
+      const nx = $('#qNext');
+      nx.textContent = qi === CONFIG.preguntas.length - 1 ? 'Ver Resultado Ninja 🎉' : 'Siguiente Pregunta ⚡';
+      nx.hidden = false;
+    });
+    box.appendChild(b);
+  });
+  $('#qFeedback').textContent = ''; $('#qFeedback').classList.remove('show');
+  $('#qNext').hidden = true;
+}
+$('#qNext').addEventListener('click', () => {
+  if (qi < CONFIG.preguntas.length - 1){ qi++; renderQ(); }
+  else {
+    $('#quiz').hidden = true;
+    $('#resultText').textContent = CONFIG.resultado;
+    $('#result').hidden = false;
+    $('#btnNext3').hidden = false;
+    burst(innerWidth / 2, innerHeight * .35, 170); rain(3500);
+  }
+});
+renderQ();
+$('#btnNext3').addEventListener('click', () => go(4));
+
+/* =====================================================
+   ESCENA 4: RAMO DE FLORES NINJA ULTRA DETALLADO
+   ===================================================== */
+function tulip([c1, c2, c3]){
+  return '<g filter="drop-shadow(0 4px 6px rgba(0,0,0,0.15))">' +
+         '<path d="M-18 -5 C-32 -25 -20 -55 0 -62 C-8 -42 -5 -20 -18 -5 Z" fill="' + c1 + '" stroke="#200" stroke-width="1.8"/>' +
+         '<path d="M18 -5 C32 -25 20 -55 0 -62 C8 -42 5 -20 18 -5 Z" fill="' + c1 + '" stroke="#200" stroke-width="1.8"/>' +
+         '<path d="M-12 -2 C-22 -25 -10 -58 0 -65 C10 -58 22 -25 12 -2 Z" fill="' + c2 + '" stroke="#200" stroke-width="1.8"/>' +
+         '<path d="M-6 0 C-10 -30 0 -58 0 -58 C0 -58 10 -30 6 0 Z" fill="' + c3 + '" stroke="#200" stroke-width="1.2"/>' +
+         '<path d="M-2 -25 L2 -25 L0 -35 Z" fill="#ffd700"/>' +
+         '</g>';
+}
+
+function rose([c1, c2, c3]){
+  return '<g filter="drop-shadow(0 4px 6px rgba(0,0,0,0.15))">' +
+         '<path d="M-22 0 C-32 -18 -18 -36 0 -38 C18 -36 32 -18 22 0 C12 18 -12 18 -22 0 Z" fill="' + c1 + '" stroke="#300" stroke-width="2"/>' +
+         '<path d="M-16 -5 C-24 -20 -10 -30 0 -32 C10 -30 24 -20 16 -5 C8 10 -8 10 -16 -5 Z" fill="' + c2 + '" stroke="#300" stroke-width="1.5"/>' +
+         '<path d="M-10 -8 C-15 -18 0 -26 0 -26 C0 -26 15 -18 10 -8 C5 2 -5 2 -10 -8 Z" fill="' + c3 + '" stroke="#300" stroke-width="1.2"/>' +
+         '<path d="M-5 -12 Q0 -20 5 -12 Q0 -4 -5 -12 Z" fill="#fff" opacity="0.6"/>' +
+         '<circle cx="0" cy="-12" r="3" fill="#ffd700"/>' +
+         '</g>';
+}
+
+function spiderLily(){
+  let s = '<g filter="drop-shadow(0 0 8px rgba(230,0,0,0.5))">';
+  for (let i = 0; i < 8; i++){
+    const a = i * 360 / 8 - 90;
+    s += '<g transform="rotate(' + a + ')">' +
+      '<path d="M0 0 C12 -18 32 -25 50 -12 C32 -10 18 -5 0 0 Z" fill="#e60000" stroke="#800" stroke-width="1.2"/>' +
+      '<path d="M0 0 C15 -25 38 -42 62 -36" stroke="#ff3333" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="62" cy="-36" r="3.5" fill="#ffd700" stroke="#800" stroke-width="1"/>' +
+      '</g>';
+  }
+  return s + '<circle r="7" fill="#800" stroke="#ffd700" stroke-width="2"/></g>';
+}
+
+const FLOWERS = [
+  { k: 'lily',  x: 200, y: 55,  s: .95, d: .5 },
+  { k: 'lily',  x: 85,  y: 145, s: .88, d: .7 },
+  { k: 'lily',  x: 315, y: 145, s: .88, d: .9 },
+  { k: 'tulip', x: 135, y: 105, s: 1.05, d: 1.0, c: ['#ff5500','#ffaa00','#ffd700'], r: -15 },
+  { k: 'tulip', x: 265, y: 105, s: 1.05, d: 1.2, c: ['#ff0055','#ff66aa','#ffffff'], r: 15 },
+  { k: 'tulip', x: 105, y: 210, s: 1,    d: 1.4, c: ['#00f0ff','#70f8ff','#ffffff'], r: -28 },
+  { k: 'tulip', x: 295, y: 210, s: 1,    d: 1.5, c: ['#ff9900','#ffd270','#ffffff'], r: 28 },
+  { k: 'rose',  x: 200, y: 130, s: 1.15, d: 1.7, c: ['#cc0000','#ff3333','#ffd700'] },
+  { k: 'rose',  x: 148, y: 178, s: 1,    d: 1.9, c: ['#ff4400','#ff7733','#ffffff'] },
+  { k: 'rose',  x: 252, y: 178, s: 1,    d: 2.1, c: ['#9b51e0','#c77dff','#ffd700'] }
+];
+
+let bouquetBuilt = false;
+function buildBouquet(){
+  if (bouquetBuilt) return;
+  bouquetBuilt = true;
+  let svg = '';
+
+  [-68,-42,-18,18,42,68].forEach((a, i) => {
+    svg += '<g transform="translate(200 270) rotate(' + a + ')"><path d="M0 0C-18 -26 -8 -64 0 -80C8 -64 18 -26 0 0Z" fill="' + (i % 2 ? '#228b22' : '#006400') + '" stroke="#ffd700" stroke-width="0.8"/></g>';
+  });
+
+  [[50,100],[350,96],[30,180],[370,180],[160,35],[240,32],[115,50],[285,55],[60,235],[340,235],[140,250],[260,250]].forEach(([x, y]) => {
+    svg += '<circle cx="' + x + '" cy="' + y + '" r="5" fill="#00f0ff" opacity=".9" filter="drop-shadow(0 0 6px #00f0ff)"/><circle cx="' + (x + 7) + '" cy="' + (y + 6) + '" r="3" fill="#fff" opacity=".8"/>';
+  });
+
+  FLOWERS.forEach(f => {
+    const yy = f.y + (f.k === 'tulip' ? 10 : 16);
+    svg += '<path class="stem" pathLength="1" style="--d:' + (f.d * .5) + 's" d="M200 320Q' + (200 + (f.x - 200) * .35) + ' ' + ((320 + yy) / 2) + ' ' + f.x + ' ' + yy + '"/>';
+  });
+
+  FLOWERS.forEach(f => {
+    const inner = f.k === 'tulip' ? tulip(f.c) : f.k === 'rose' ? rose(f.c) : spiderLily();
+    svg += '<g transform="translate(' + f.x + ' ' + f.y + ') rotate(' + (f.r || 0) + ') scale(' + f.s + ')">' +
+           '<g class="pop" style="--d:' + f.d + 's"><g class="swayer" style="--d:' + (-f.d * 2) + 's">' + inner + '</g></g></g>';
+  });
+
+  svg += '<path d="M90 240L200 290L310 240L222 420L178 420Z" fill="#cd4729" stroke="#ffd700" stroke-width="2"/>' +
+         '<path d="M90 240L200 290L178 420Z" fill="#b83b1d"/>' +
+         '<path d="M310 240L200 290L222 420Z" fill="#e05333"/>' +
+         '<path d="M90 240Q200 215 310 240" fill="none" stroke="#ffd700" stroke-width="3" stroke-linecap="round"/>' +
+         '<circle cx="200" cy="345" r="22" fill="#ff9900" stroke="#ffd700" stroke-width="2.5"/>' +
+         '<path d="M200 333 A 12 12 0 1 1 190 345 A 6 6 0 1 1 198 345" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>' +
+         '<path d="M192 366L176 405M208 366L224 405" stroke="#ff5500" stroke-width="7" stroke-linecap="round"/>';
+
+  [[65,65],[335,75],[200,10],[370,140],[30,140]].forEach(([x, y], i) => {
+    svg += '<path class="spark" style="animation-delay:' + (i * .4) + 's;transform-box:fill-box;transform-origin:center" d="M' + x + ' ' + (y - 10) + 'L' + (x + 3) + ' ' + (y - 3) + 'L' + (x + 10) + ' ' + y + 'L' + (x + 3) + ' ' + (y + 3) + 'L' + x + ' ' + (y + 10) + 'L' + (x - 3) + ' ' + (y + 3) + 'L' + (x - 10) + ' ' + y + 'L' + (x - 3) + ' ' + (y - 3) + 'Z"/>';
+  });
+
+  $('#bouquet').innerHTML = svg;
+}
+
+$('#btnRestart').addEventListener('click', () => location.reload());
+</script>
+</body>
+</html>
